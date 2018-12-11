@@ -20,3 +20,32 @@ volatile 是因为其本身包含“禁止指令重排序”的语义。
        比如 volatile int a = 0；之后有一个操作 a++；这个变量a具有可见性，但是a++ 依然
        是一个非原子操作，也就是这个操作同样存在线程安全问题
 </pre>
+
+![](https://i.imgur.com/RidEMrW.png)
+
+<pre>
+synchonized关键字
+
+       Java中每一个对象都可以作为锁，这是synchronized实现同步的基础：
+
+            1）普通同步方法，锁是当前实例对象
+            2）静态同步方法，锁是当前类的class对象
+            3）同步方法块，锁是括号里面的对象
+
+       通过javap查看生成的class文件，可以发现synchronized的实现：
+           同步代码块是使用monitorenter和monitorexit指令实现的。
+
+           任何一个对象都有一个monitor与之相关联，当且一个monitor被持有之后，它将处于锁定
+       状态。线程执行到monitorenter指令时，将会尝试获取对象锁对应的monitor所有权，即尝试
+       获取对象的锁；
+
+       Java对象头和monitor是实现synchronized的基础。
+           synchronized用的锁是存在Java对象头里的，Hotspot虚拟机的对象头主要包括两部
+       分数据：Mark Word（标记字段）、Klass Pointer（类型指针）。其中Klass Point是是对
+       象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，
+       Mark Word用于存储对象自身的运行时数据，它是实现轻量级锁和偏向锁的关键
+
+       MarkWorld用于存储对象自身的运行时数据，如哈希吗，GC分代年龄，锁状态标志，线程持有的
+       锁，偏向线程ID，偏向时间戳等等，Java对象头一般占用2个机器码，每个机器码4个字节，如
+       果对象是数组，则需要3个机器码，
+</pre>
